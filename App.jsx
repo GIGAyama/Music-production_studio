@@ -492,6 +492,22 @@ const TutorialOverlay = ({ isActive, currentStep, nextStep, prevStep, endTutoria
 
   useEffect(() => {
     if (!isActive) return;
+
+    // ガイドツアー用のキーボード操作
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        e.preventDefault();
+        nextStep();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevStep();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        endTutorial();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     const updateRect = () => {
       if (stepData.targetId) {
         const el = document.getElementById(stepData.targetId);
@@ -506,8 +522,12 @@ const TutorialOverlay = ({ isActive, currentStep, nextStep, prevStep, endTutoria
     updateRect();
     const timer = setTimeout(updateRect, 300);
     window.addEventListener('resize', updateRect);
-    return () => { clearTimeout(timer); window.removeEventListener('resize', updateRect); };
-  }, [isActive, currentStep, stepData]);
+    return () => { 
+      clearTimeout(timer); 
+      window.removeEventListener('resize', updateRect); 
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isActive, currentStep, stepData, nextStep, prevStep, endTutorial]);
 
   if (!isActive) return null;
 
@@ -660,8 +680,8 @@ const AiComposerModal = ({ show, onClose, onLoad }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
         {/* ヘッダー */}
         <div className="bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-4 flex justify-between items-center flex-shrink-0">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
@@ -748,8 +768,8 @@ const ExportModal = ({ show, onClose, onExport, isExporting, bpm, activePages })
   const timeString = `${mins > 0 ? `${mins}分` : ''}${secs.toString().padStart(2, '0')}秒`;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={!isExporting ? onClose : undefined}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all" onClick={e => e.stopPropagation()}>
         <div className="bg-indigo-50 px-6 py-4 flex justify-between items-center border-b border-indigo-100">
           <h3 className="text-lg font-bold text-indigo-800 flex items-center gap-2"><Download size={20}/> <R t="MP3出力" r="ダウンロード" /></h3>
           {!isExporting && <button onClick={onClose} className="text-indigo-400 hover:text-indigo-600 transition-colors"><X size={24}/></button>}
@@ -778,8 +798,8 @@ const ExportModal = ({ show, onClose, onExport, isExporting, bpm, activePages })
 const ClearConfirmModal = ({ show, onConfirm, onCancel }) => {
   if (!show) return null;
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all p-6 text-center">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onCancel}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all p-6 text-center" onClick={e => e.stopPropagation()}>
         <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-500"><Trash2 size={32} /></div>
         <h3 className="text-xl font-bold text-slate-800 mb-2"><R t="全消去" r="すべてけす" /></h3>
         <p className="text-slate-500 text-sm font-medium mb-6">本当に全ての音符を消去しますか？<br/>この操作は元に戻せません。</p>
@@ -795,9 +815,7 @@ const ClearConfirmModal = ({ show, onConfirm, onCancel }) => {
 const ShortcutsModal = ({ show, onClose }) => {
   if (!show) return null;
   return (
-    // 背景部分に onClick={onClose} を追加し、モーダル外クリックで閉じるようにする
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
-      {/* モーダル本体のクリックでは閉じないように e.stopPropagation() を追加 */}
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all" onClick={(e) => e.stopPropagation()}>
         <div className="bg-indigo-50 px-6 py-4 flex justify-between items-center border-b border-indigo-100">
           <h3 className="text-lg font-bold text-indigo-800 flex items-center gap-2"><Keyboard size={20}/> <span><R t="操作一覧" r="ショートカット" /></span></h3>
@@ -808,10 +826,11 @@ const ShortcutsModal = ({ show, onClose }) => {
           <ShortcutRow label={<span><R t="小節" r="しょうせつ" />をコピー</span>} keys={["C"]} />
           <ShortcutRow label={<span><R t="小節" r="しょうせつ" />を<R t="貼" r="は" />り<R t="付" r="つ" />け</span>} keys={["V"]} />
           <ShortcutRow label={<span><R t="前" r="まえ" />の<R t="小節" r="しょうせつ" /> / <R t="次" r="つぎ" />の<R t="小節" r="しょうせつ" /></span>} keys={["←", "→"]} />
-          <ShortcutRow label={<span>AI<R t="作曲" r="さっきょく" />を<R t="開" r="ひら" />く</span>} keys={["A"]} />
-          <ShortcutRow label={<span>MP3<R t="出力" r="しゅつりょく" /></span>} keys={["M"]} />
+          <ShortcutRow label={<span>AI<R t="作曲" r="さっきょく" />を<R t="開閉" r="かいへい" /></span>} keys={["A"]} />
+          <ShortcutRow label={<span>MP3<R t="出力" r="しゅつりょく" />を<R t="開閉" r="かいへい" /></span>} keys={["M"]} />
           <ShortcutRow label={<span><R t="全消去" r="すべてけす" /></span>} keys={["Backspace", "Delete"]} />
           <ShortcutRow label={<span><R t="操作一覧" r="そうさいちらん" />の<R t="開閉" r="かいへい" /></span>} keys={["?"]} />
+          <ShortcutRow label={<span><R t="画面" r="がめん" />を<R t="閉" r="と" />じる</span>} keys={["Esc"]} />
         </div>
       </div>
     </div>
@@ -858,8 +877,7 @@ const Footer = () => (
   </footer>
 );
 
-// onToggleShortcuts プロパティを受け取るように変更
-const MainBoard = ({ onToggleShortcuts }) => {
+const MainBoard = ({ onToggleShortcuts, isShortcutsOpen, isTutorialActive }) => {
   const {
     isPlaying, setIsPlaying, currentStep, bpm, setBpm, scaleKey, setScaleKey, instrument, setInstrument, delayEnabled, setDelayEnabled, reverbEnabled, setReverbEnabled,
     activePages, setActivePages, currentPage, setCurrentPage, pageNames, setPageNames, copyPage, pastePage, clipboard, melodyGrid, drumGrid, saveStatus,
@@ -888,8 +906,41 @@ const MainBoard = ({ onToggleShortcuts }) => {
   // キーボードショートカットの登録
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // チュートリアル中や文字入力中はショートカットを無効化
+      if (isTutorialActive) return;
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
 
+      const isModalOpen = showAiModal || showExportModal || showClearConfirm || isShortcutsOpen;
+
+      // Escキーで開いているモーダルを閉じる
+      if (e.key === 'Escape') {
+        if (showAiModal) setShowAiModal(false);
+        else if (showExportModal) setShowExportModal(false);
+        else if (showClearConfirm) cancelClearAll();
+        else if (isShortcutsOpen) onToggleShortcuts(); 
+        return;
+      }
+
+      // トグル（開閉）操作のショートカット
+      if ((e.key === 'a' || e.key === 'A') && !showExportModal && !showClearConfirm && !isShortcutsOpen) {
+        setShowAiModal(prev => !prev);
+        return;
+      }
+      if ((e.key === 'm' || e.key === 'M') && !showAiModal && !showClearConfirm && !isShortcutsOpen) {
+        setShowExportModal(prev => !prev);
+        return;
+      }
+      if (e.key === '?' || e.key === '/') {
+        if (!showAiModal && !showExportModal && !showClearConfirm) {
+           onToggleShortcuts();
+        }
+        return;
+      }
+
+      // 何かのモーダルが開いている時は背後の操作を無効にする
+      if (isModalOpen) return;
+
+      // 通常時のショートカット
       switch (e.key) {
         case ' ':
           e.preventDefault();
@@ -904,12 +955,6 @@ const MainBoard = ({ onToggleShortcuts }) => {
         case 'v':
         case 'V':
           handlePaste(); break;
-        case 'a':
-        case 'A':
-          setShowAiModal(true); break;
-        case 'm':
-        case 'M':
-          setShowExportModal(true); break;
         case 'ArrowLeft':
           setCurrentPage(prev => Math.max(prev - 1, 0)); break;
         case 'ArrowRight':
@@ -917,10 +962,6 @@ const MainBoard = ({ onToggleShortcuts }) => {
         case 'Backspace':
         case 'Delete':
           requestClearAll(); break;
-        case '?':
-        case '/':
-          // ?キーで開閉をトグルする
-          onToggleShortcuts(); break;
         default:
           break;
       }
@@ -928,7 +969,7 @@ const MainBoard = ({ onToggleShortcuts }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [initAudio, setIsPlaying, handleCopy, handlePaste, setShowAiModal, setShowExportModal, setCurrentPage, activePages, requestClearAll, onToggleShortcuts]);
+  }, [initAudio, setIsPlaying, handleCopy, handlePaste, setShowAiModal, setShowExportModal, setCurrentPage, activePages, requestClearAll, onToggleShortcuts, showAiModal, showExportModal, showClearConfirm, isShortcutsOpen, isTutorialActive, cancelClearAll]);
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full overflow-hidden ruby-text-container bg-slate-100">
@@ -1150,8 +1191,11 @@ export default function App() {
       `}</style>
       <Header onHelpClick={tutorial.startTutorial} onShortcutsClick={() => setShowShortcuts(true)} />
       <main className="flex-grow flex overflow-hidden">
-        {/* onToggleShortcuts を渡して開閉を切り替えられるようにする */}
-        <MainBoard onToggleShortcuts={() => setShowShortcuts(prev => !prev)} />
+        <MainBoard 
+          onToggleShortcuts={() => setShowShortcuts(prev => !prev)} 
+          isShortcutsOpen={showShortcuts}
+          isTutorialActive={tutorial.isActive}
+        />
       </main>
       <Footer />
       <TutorialOverlay {...tutorial} />
