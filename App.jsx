@@ -623,19 +623,27 @@ const AiComposerModal = ({ show, onClose, onLoad }) => {
 - activePages * 16 の列数まで音符(true)を配置し、それ以降の列はfalseにすること。
 - 子供が聞いて楽しく、音楽的に成立する美しいパターンを生成すること。`;
 
-  const handleCopyPrompt = () => {
-    const textarea = document.createElement('textarea');
-    textarea.value = promptText;
-    document.body.appendChild(textarea);
-    textarea.select();
+  const handleCopyPrompt = async () => {
     try {
-      document.execCommand('copy');
+      await navigator.clipboard.writeText(promptText);
       setCopyStatus('copied');
       setTimeout(() => setCopyStatus('copy'), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
+      // Fallback for older browsers or insecure contexts
+      const textarea = document.createElement('textarea');
+      textarea.value = promptText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        setCopyStatus('copied');
+        setTimeout(() => setCopyStatus('copy'), 2000);
+      } catch (e) {
+        console.error('Fallback copy failed', e);
+      }
+      document.body.removeChild(textarea);
     }
-    document.body.removeChild(textarea);
   };
 
   const handleLoadData = () => {
