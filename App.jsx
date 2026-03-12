@@ -795,8 +795,10 @@ const ClearConfirmModal = ({ show, onConfirm, onCancel }) => {
 const ShortcutsModal = ({ show, onClose }) => {
   if (!show) return null;
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+    // 背景部分に onClick={onClose} を追加し、モーダル外クリックで閉じるようにする
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      {/* モーダル本体のクリックでは閉じないように e.stopPropagation() を追加 */}
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all" onClick={(e) => e.stopPropagation()}>
         <div className="bg-indigo-50 px-6 py-4 flex justify-between items-center border-b border-indigo-100">
           <h3 className="text-lg font-bold text-indigo-800 flex items-center gap-2"><Keyboard size={20}/> <span><R t="操作一覧" r="ショートカット" /></span></h3>
           <button onClick={onClose} className="text-indigo-400 hover:text-indigo-600 transition-colors"><X size={24}/></button>
@@ -809,7 +811,7 @@ const ShortcutsModal = ({ show, onClose }) => {
           <ShortcutRow label={<span>AI<R t="作曲" r="さっきょく" />を<R t="開" r="ひら" />く</span>} keys={["A"]} />
           <ShortcutRow label={<span>MP3<R t="出力" r="しゅつりょく" /></span>} keys={["M"]} />
           <ShortcutRow label={<span><R t="全消去" r="すべてけす" /></span>} keys={["Backspace", "Delete"]} />
-          <ShortcutRow label={<span><R t="操作一覧" r="そうさいちらん" />を<R t="開" r="ひら" />く</span>} keys={["?"]} />
+          <ShortcutRow label={<span><R t="操作一覧" r="そうさいちらん" />の<R t="開閉" r="かいへい" /></span>} keys={["?"]} />
         </div>
       </div>
     </div>
@@ -856,7 +858,8 @@ const Footer = () => (
   </footer>
 );
 
-const MainBoard = ({ onOpenShortcuts }) => {
+// onToggleShortcuts プロパティを受け取るように変更
+const MainBoard = ({ onToggleShortcuts }) => {
   const {
     isPlaying, setIsPlaying, currentStep, bpm, setBpm, scaleKey, setScaleKey, instrument, setInstrument, delayEnabled, setDelayEnabled, reverbEnabled, setReverbEnabled,
     activePages, setActivePages, currentPage, setCurrentPage, pageNames, setPageNames, copyPage, pastePage, clipboard, melodyGrid, drumGrid, saveStatus,
@@ -916,7 +919,8 @@ const MainBoard = ({ onOpenShortcuts }) => {
           requestClearAll(); break;
         case '?':
         case '/':
-          onOpenShortcuts(); break;
+          // ?キーで開閉をトグルする
+          onToggleShortcuts(); break;
         default:
           break;
       }
@@ -924,10 +928,9 @@ const MainBoard = ({ onOpenShortcuts }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [initAudio, setIsPlaying, handleCopy, handlePaste, setShowAiModal, setShowExportModal, setCurrentPage, activePages, requestClearAll, onOpenShortcuts]);
+  }, [initAudio, setIsPlaying, handleCopy, handlePaste, setShowAiModal, setShowExportModal, setCurrentPage, activePages, requestClearAll, onToggleShortcuts]);
 
   return (
-    // 💡 レスポンシブの要： flex-col (スマホ時は縦並び) と md:flex-row (PC時は横並び)
     <div className="flex flex-col md:flex-row h-full w-full overflow-hidden ruby-text-container bg-slate-100">
       
       {/* ＝＝＝ 左側（スマホ時は下部）：サイドパネル（設定・操作エリア）＝＝＝ */}
@@ -1134,7 +1137,6 @@ export default function App() {
 
   return (
     <div className="h-screen flex flex-col bg-slate-100 overflow-hidden" translate="no">
-      {/* アプリ全体の根元で翻訳機能を完全にブロックする */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans JP', sans-serif; overflow: hidden; }
@@ -1148,7 +1150,8 @@ export default function App() {
       `}</style>
       <Header onHelpClick={tutorial.startTutorial} onShortcutsClick={() => setShowShortcuts(true)} />
       <main className="flex-grow flex overflow-hidden">
-        <MainBoard onOpenShortcuts={() => setShowShortcuts(true)} />
+        {/* onToggleShortcuts を渡して開閉を切り替えられるようにする */}
+        <MainBoard onToggleShortcuts={() => setShowShortcuts(prev => !prev)} />
       </main>
       <Footer />
       <TutorialOverlay {...tutorial} />
