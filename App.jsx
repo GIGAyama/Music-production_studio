@@ -691,13 +691,13 @@ const AiComposerModal = ({ show, onClose, onLoad }) => {
               <R t="好" r="す" />きなAIを<R t="開" r="ひら" />いて、コピーした<R t="指示" r="プロンプト" />を<R t="送" r="おく" />ってみてね！
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <a href="[https://chatgpt.com/](https://chatgpt.com/)" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 py-2.5 bg-white rounded-lg text-slate-700 font-bold border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm text-sm">
+              <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 py-2.5 bg-white rounded-lg text-slate-700 font-bold border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm text-sm">
                 ChatGPT <ExternalLink size={14} className="text-slate-400" />
               </a>
-              <a href="[https://gemini.google.com/](https://gemini.google.com/)" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 py-2.5 bg-white rounded-lg text-slate-700 font-bold border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm text-sm">
+              <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 py-2.5 bg-white rounded-lg text-slate-700 font-bold border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm text-sm">
                 Gemini <ExternalLink size={14} className="text-slate-400" />
               </a>
-              <a href="[https://claude.ai/](https://claude.ai/)" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 py-2.5 bg-white rounded-lg text-slate-700 font-bold border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm text-sm">
+              <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 py-2.5 bg-white rounded-lg text-slate-700 font-bold border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm text-sm">
                 Claude <ExternalLink size={14} className="text-slate-400" />
               </a>
             </div>
@@ -843,7 +843,7 @@ const Header = ({ onHelpClick, onShortcutsClick }) => (
 
 const Footer = () => (
   <footer className="w-full bg-slate-50 border-t border-slate-200 pt-3 pb-2 text-center text-xs text-slate-500 font-medium flex-shrink-0 z-10">
-    <p>© {new Date().getFullYear()} 音楽制作スタジオ <a href="[https://note.com/cute_borage86](https://note.com/cute_borage86)" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">GIGA山</a></p>
+    <p>© {new Date().getFullYear()} 音楽制作スタジオ <a href="https://note.com/cute_borage86" target="_blank" rel="noopener noreferrer" className="text-slate-500 cursor-default outline-none">GIGA山</a></p>
   </footer>
 );
 
@@ -1108,7 +1108,7 @@ export default function App() {
   return (
     <div className="h-screen flex flex-col bg-slate-100 overflow-hidden">
       <style>{`
-        @import url('[https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap](https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
         body { font-family: 'Noto Sans JP', sans-serif; overflow: hidden; }
         .ruby-text-container { line-height: 2.2; }
         ruby { ruby-align: center; }
