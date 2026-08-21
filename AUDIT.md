@@ -57,7 +57,7 @@ CSP を素で入れると **確実に壊れる箇所が3つ**ある。これが 
 | B | `App.jsx:1182` | `@import url('https://fonts.googleapis.com/...Noto+Sans+JP')` | `style-src`/`font-src 'self'` で拒否 → **フォントが標準ゴシックに戻る（見た目が変わる）** | `@fontsource/noto-sans-jp` でローカル配置（woff2 のみ） |
 | C | `App.jsx:1182` 周辺 | React 内の `<style>` によるインラインスタイル注入 | `style-src 'self'` で拒否 | `style-src` に `'unsafe-inline'` を残し、理由をコメント明記（Tailwind + 動的スタイルのため実質必須） |
 
-外部リンク（`chatgpt.com` / `gemini.google.com` / `claude.ai` / `note.com`）は `<a target="_blank" rel="noopener noreferrer">` であり、
+外部リンク（`chatgpt.com` / `gemini.google.com` / `claude.ai` / `giga-school.com`）は `<a target="_blank" rel="noopener noreferrer">` であり、
 すべて適切に `rel` が付いている。CSP の `form-action` / `frame-src` とは衝突しない。
 
 **本セッションの環境ではブラウザでの目視確認ができない。**

@@ -176,4 +176,4 @@
 このアプリの不具合や要望は、GitHub の Issue へお願いします。
 https://github.com/GIGAyama/Music-production_studio/issues
 
-作者：GIGA山 — [note](https://note.com/cute_borage86)
+作者：GIGA山 — [GIGA school](https://giga-school.com)

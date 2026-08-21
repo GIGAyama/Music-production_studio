@@ -254,7 +254,7 @@ MIT License. 詳しくは [`LICENSE`](./LICENSE) をご覧ください。
 
 **GIGA山**
 
-*   [Note - GIGA山](https://note.com/cute_borage86 "null")
+*   [GIGA山のホームページ](https://giga-school.com "null")
     
 
 子供たちの創造力を刺激するツールとして、教育現場で自由にご活用ください！
