@@ -873,7 +873,7 @@ const Header = ({ onHelpClick, onShortcutsClick }) => (
 
 const Footer = () => (
   <footer className="w-full bg-slate-50 border-t border-slate-200 pt-3 pb-2 text-center text-xs text-slate-500 font-medium flex-shrink-0 z-10">
-    <p>© {new Date().getFullYear()} 音楽制作スタジオ <a href="https://note.com/cute_borage86" target="_blank" rel="noopener noreferrer" className="text-slate-500 cursor-default outline-none">GIGA山</a></p>
+    <p>© {new Date().getFullYear()} 音楽制作スタジオ <a href="https://giga-school.com" target="_blank" rel="noopener noreferrer" className="text-slate-500 cursor-default outline-none">GIGA山</a></p>
   </footer>
 );
 
