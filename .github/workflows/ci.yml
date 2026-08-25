@@ -1,0 +1,50 @@
+# =====================================================================
+# ci.yml — このリポジトリの最低限の点検
+# =====================================================================
+# Vite でビルドして配信するリポジトリ。テストも品質ゲートも持たないので、
+# 見られるのは「ビルドが通るか」まで。それでも、これが通らないものが
+# main に入ると**配信そのものが止まる**ので、いちばん効く一手になる。
+#
+#   1. build — npm ci して npm run build が通るか。
+#   2. drift — 配られたスキルが正本からずれていないか。
+#
+# ⚠️ これまで deploy.yml しか無く、それは main への push でしか動かなかった。
+#    つまり pull_request の時点では何も見ておらず、壊れていることが
+#    分かるのは**配信に失敗したあと**だった。ここを前に倒す。
+#
+# ⚠️ ビルドの成果物はコミットしない。ここでは通ることだけを見る。
+# =====================================================================
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: ビルドが通るか
+        run: npm run build
+
+  # 配られたスキル（.claude/skills/）が正本からずれていないか。
+  # 正本は GIGAyama.github.io/standards/ にあり、そこを checkout して直に照合する。
+  # 実行時の依存は増えない（このリポジトリには何も足さない）。
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: GIGAyama/GIGAyama.github.io
+          path: .standards-src
+      - name: 正本とのずれ検知
+        run: node .standards-src/standards/check-drift.mjs --standards .standards-src/standards
