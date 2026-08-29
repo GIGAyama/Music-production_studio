@@ -871,9 +871,23 @@ const Header = ({ onHelpClick, onShortcutsClick }) => (
   </nav>
 );
 
+/* ⚠️ 1 行に収める。flex-nowrap と min-w-0 の 2 つが要る。nowrap だけだと、
+   クレジットの文字列が縮まずに列を押し広げて横スクロールになる。
+   狭い画面ではクレジットが … で切れる。ここが太ると、そのぶん
+   打ちこみの画面が狭くなる。 */
 const Footer = () => (
-  <footer className="w-full bg-slate-50 border-t border-slate-200 pt-3 pb-2 text-center text-xs text-slate-500 font-medium flex-shrink-0 z-10">
-    <p>© {new Date().getFullYear()} 音楽制作スタジオ <a href="https://giga-school.com" target="_blank" rel="noopener noreferrer" className="text-slate-500 cursor-default outline-none">GIGA山</a></p>
+  <footer className="w-full flex flex-nowrap items-center justify-center gap-1 bg-slate-50 border-t border-slate-200 py-1 text-center text-xs text-slate-500 font-medium flex-shrink-0 z-10">
+    <span className="min-w-0 truncate">© {new Date().getFullYear()} 音楽制作スタジオ <a href="https://giga-school.com" target="_blank" rel="noopener noreferrer" className="text-slate-500 cursor-default outline-none">GIGA山</a></span>
+    {/* ⚠️ 行き先のリンクを手で書かないこと。中身は正本の部品
+        standards/web/giga-app-links.js（配布物 public/giga-app-links.js）が
+        この中に出す。文言も並びも行き先も、あちらで決まっている。
+
+        ⚠️ <div> にしないこと。そこで改行が入ってフッターが 2 行になる。
+
+        ⚠️ data-links で「つかいかた」を外してある。このアプリにはまだ
+           docs/manual/ が無く、既定のまま出すと行き止まりのリンクになる。
+           マニュアルを書いたら、この属性ごと消すこと。 */}
+    <span data-giga-links data-links="terms,privacy" />
   </footer>
 );
 
