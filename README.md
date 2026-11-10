@@ -211,13 +211,12 @@ npm run build
 
 | いつ | 通信先 | 必須か |
 |---|---|---|
-| 常時（画面表示） | `fonts.googleapis.com`（日本語フォント） | 任意。届かなくても標準フォントで表示されます |
-| **MP3出力を押したときのみ** | `cdnjs.cloudflare.com`（MP3変換ライブラリ `lamejs`） | **必須**。届かないとMP3出力だけが失敗します |
 | ユーザーがボタンを押したとき | `chatgpt.com` / `gemini.google.com` / `claude.ai` を新しいタブで開くだけ | 任意 |
 
-> ⚠️ **既知の課題**：MP3変換ライブラリを外部CDNから読み込んでおり、SRI（改ざん検知）も
-> Content-Security-Policy も未設定です。校内フィルタで遮断されると出力機能が使えません。
-> 自己ホスト化が今後の改善予定です（詳細は [`AUDIT.md`](./AUDIT.md)）。
+画面を出すためにも、MP3 に出すためにも、外への通信は出ません（2026-11-10 から）。
+日本語フォント（Noto Sans JP）と MP3 変換ライブラリ（lamejs）は、どちらも自分のところから配っています。
+それまでは `fonts.googleapis.com` と `cdnjs.cloudflare.com` から実行時に読んでいたので、
+校内フィルタで遮断されると MP3 出力が使えませんでした。
 
 ### AI作曲機能について
 
@@ -268,13 +267,18 @@ MIT License. 詳しくは [`LICENSE`](./LICENSE) をご覧ください。
 | --- | --- | --- |
 | [lamejs](https://github.com/zhuker/lamejs) | MP3 の書き出し | **GNU LGPL v3.0** |
 | React / React DOM | 画面の組み立て | MIT License |
-| Google Fonts の書体 | 画面の書体 | SIL Open Font License 1.1 |
+| Noto Sans JP | 画面の書体 | SIL Open Font License 1.1（全文は `fonts/OFL.txt`） |
 
-**MP3 書き出しについて。** MP3 への変換には lamejs（LAME を JavaScript に移植したもの）を CDN から読み込んで使っています。
+**MP3 書き出しについて。** MP3 への変換には lamejs（LAME を JavaScript に移植したもの）を使っています。
 lamejs は **GNU 劣等一般公衆利用許諾書 バージョン3（LGPL-3.0）** で提供されています。
-lamejs を自分側に置いて配布する（セルフホストする）場合は、
-**LGPL-3.0 の全文と著作権表示をあわせて配布する必要があります。**
-セルフホスト化を行う際は、先に `vendor/lamejs/COPYING.LESSER` などにライセンス全文を置いてください。
+2026-11-10 から、lamejs 1.2.1 を自分側に置いて配っています（`public/vendor/lamejs/`）。
+
+- `lame.min.js` は npm の `lamejs@1.2.1` に入っているものを **1 バイトも変えずに**置いてあります
+  （`npm run build:vendor` が写し、`npm run verify:vendor` が同じかどうかを見ます）
+- **アプリ本体の JavaScript には混ぜていません。** 別のファイルのまま、MP3出力を押したときにだけ読みます。
+  差し替えたい方は、そのファイルを置きかえるだけで動きます
+- LGPL-3.0 と GPL-3.0 の全文、著作権表示、ソースの入手先を同じフォルダに置いてあります
+  （`COPYING.LESSER` / `COPYING` / `README.txt`）
 
 なお、MP3 に関する特許は 2017 年にすべて満了しているため、特許上の制約はありません。
 

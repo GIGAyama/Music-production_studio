@@ -1,0 +1,30 @@
+{
+  "//": "書体の取りこみ方。作り直すには npm run build:fonts（ネットが要る）。画面の Noto Sans JP を、1〜6 年の漢字と画面に出る字だけ収録する",
+  "families": [
+    {
+      "family": "Noto Sans JP",
+      "weights": [
+        400,
+        500,
+        700
+      ]
+    }
+  ],
+  "grades": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "scan": [
+    "index.html",
+    "App.jsx"
+  ],
+  "outDir": "fonts",
+  "cssPath": "fonts.css",
+  "hrefPrefix": "./fonts/",
+  "copyright": "Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'",
+  "license": "SIL Open Font License 1.1 — 全文は fonts/OFL.txt"
+}
