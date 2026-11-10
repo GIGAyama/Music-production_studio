@@ -32,6 +32,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # MP3 変換ライブラリの写しが、npm の lamejs と 1 バイトも違わないこと。
+      # LGPL の部品なので、手で書き替えたものを配らない（tools/vendor-lamejs.mjs）。
+      # ⚠️ 検査を書いただけで呼ばないと、誰も走らせない検査が 1 本増えるだけになる。
+      - name: lamejs の写しが npm のものと同じか
+        run: npm run verify:vendor
       - name: ビルドが通るか
         run: npm run build
 

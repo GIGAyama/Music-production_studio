@@ -30,11 +30,18 @@ const DRUM_INSTRUMENTS = [
 const STEPS_PER_PAGE = 16; 
 const MAX_PAGES = 4;
 
+// MP3 変換ライブラリ（lamejs）は、押したときにだけ**自分のところから**読む。
+// ⚠️ 外の CDN に戻さないこと。2026-11-10 まで cdnjs から読んでいて、学校のフィルタが
+//    塞いでいると「MP3出力」を押した児童全員がエラーになっていた。共用端末では
+//    MP3 に出さないと曲が残らないので、残す手だてだけが外に頼っている形だった。
+// ⚠️ import して本体の JS に混ぜないこと。lamejs は LGPL-3.0 で、別のファイルの
+//    まま置くことを求めている（public/vendor/lamejs/README.txt）。
+const LAME_URL = `${import.meta.env.BASE_URL}vendor/lamejs/lame.min.js`;
 const loadLameJS = () => {
   return new Promise((resolve, reject) => {
     if (window.lamejs) return resolve(window.lamejs);
     const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js';
+    script.src = LAME_URL;
     script.onload = () => resolve(window.lamejs);
     script.onerror = () => reject(new Error('MP3変換機能の読み込みに失敗しました'));
     document.body.appendChild(script);
@@ -1193,7 +1200,8 @@ export default function App() {
   return (
     <div className="h-screen flex flex-col bg-slate-100 overflow-hidden" translate="no">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        /* ⚠️ ここに外の @import を書かないこと。Noto Sans JP は index.html が読む
+              fonts.css（自己ホスト。npm run build:fonts の生成物）から来る。 */
         body { font-family: 'Noto Sans JP', sans-serif; overflow: hidden; }
         .ruby-text-container { line-height: 2.2; }
         ruby { ruby-align: center; }
